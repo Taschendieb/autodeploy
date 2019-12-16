@@ -34,6 +34,7 @@ yargs
     .command('list', 'list all deployments', (yargs) => {}, (argv) => {
         console.table(config.listDeployments())
     })
+    .alias("rm", "remove")
     .command('remove <name>', 'remove a deployment', (yargs) => {
         yargs
             .positional('name', {

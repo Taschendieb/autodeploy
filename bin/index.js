@@ -30,6 +30,7 @@ yargs
             path: path.resolve(argv.path)
         })
     })
+    .alias("ls", "list")
     .command('list', 'list all deployments', (yargs) => {}, (argv) => {
         console.table(config.listDeployments())
     })

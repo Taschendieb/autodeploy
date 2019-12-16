@@ -1,7 +1,5 @@
 #!/usr/bin/node
 
-var fs = require("fs")
-
 const yargs = require('yargs');
 const config = require("../lib/config.js")
 const path = require("path");
@@ -47,7 +45,9 @@ yargs
             console.log("error removing " + argv.name)
         }
 
-    }).argv
+    })
+    .demandCommand()
+    .argv
 
 /*
 // autodeploy giturl Mantis /home/penis/mantis

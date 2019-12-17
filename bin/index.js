@@ -1,9 +1,9 @@
 #!/usr/bin/node
 
 const logic = require('../lib/logic.js');
+const config = require("../lib/config.js");
 
 const yargs = require('yargs');
-const config = require("../lib/config.js");
 const path = require("path");
 const pm2 = require('pm2');
 const child_process = require('child_process');

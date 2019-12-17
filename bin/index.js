@@ -8,12 +8,6 @@ const path = require("path");
 const pm2 = require('pm2');
 const child_process = require('child_process');
 
-
-/* 
-
-}); */
-
-
 yargs
     .command('deploy <url> <path> [name]', 'map a deployment', (yargs) => {
         yargs

@@ -1,26 +1,18 @@
 #!/usr/bin/node
 
-let server = require("../lib/server.js")
+const logic = require('../lib/logic.js');
 
 const yargs = require('yargs');
-const config = require("../lib/config.js")
+const config = require("../lib/config.js");
 const path = require("path");
 const pm2 = require('pm2');
+const child_process = require('child_process');
 
 
-/*
- pm2.connect(function(err) {
-  if (err) {
-    throw err;
-    process.exit(2);
-  } else {
-      pm2.start("../lib/server.js", (err) => {
-          if (err) console.log("server.js is already running");
-      }
-  } 
-  pm2.disconnect();
-}
-*/
+/* 
+
+}); */
+
 
 yargs
     .command('deploy <url> <path> [name]', 'map a deployment', (yargs) => {
@@ -40,15 +32,39 @@ yargs
         } else {
             name = argv.name
         }
+        logic.initRepository(path.resolve(argv.path), argv.url, argv.force)
         config.appendDeployment({
             name: name,
             url: argv.url,
-            path: path.resolve(argv.path)
+            path: path.resolve(argv.path),
+            trigger: [{
+                event: "push",
+                branch: "master",
+                actions: [{
+                    name: "pull",
+                    action: "git reset --hard origin/master"
+                }]
+            }]
         })
     })
     .command(['list', 'ls'], 'list all deployments', (yargs) => {}, async (argv) => {
         const deployments = await config.listDeployments()
-        console.table(deployments, )
+        console.table(deployments,["name","url","path"])
+    })
+    .command(['autostart', 'as'], 'autostart', (yargs) => {}, async (argv) => {
+        pm2.connect(function (err) {
+            if (err) {
+                console.error(err);
+                process.exit(2);
+            }
+            console.warn("Run pm2 startup to start AutoDeploy on reboot!")
+            pm2.start('./lib/server.js',{
+                "name": "AutoDeploy Server"
+            }, function (err) {
+                pm2.disconnect();
+                if (err) console.log("PM2 daemon is already running!");
+            });
+        });
     })
     .command(['remove <name>', 'rm <name>'], 'remove a deployment', (yargs) => {
         yargs
@@ -65,7 +81,12 @@ yargs
 
     })
     .command('listen', 'listen for changes to the repo', (argv) => {
-        server.start()
+        child_process.spawn(__dirname + "/../lib/server.js", [], {stdio: 'inherit'});
+    })
+    .option('force', {
+        alias: 'f',
+        type: 'boolean',
+        description: 'force command'
     })
     .demandCommand()
     .argv
@@ -111,6 +132,3 @@ yargs
 // https://nodejs.org/api/http.html#http_class_http_incomingmessage
 
 */
-
-
-

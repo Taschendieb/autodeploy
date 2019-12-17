@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "pm2": "^4.2.1",
     "yargs": "^15.0.2"
   }
 }

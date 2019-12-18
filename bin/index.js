@@ -36,7 +36,7 @@ yargs
                 branch: "master",
                 actions: [{
                     name: "pull",
-                    action: "git pull && git reset --hard origin/master"
+                    action: "git reset --hard origin/master && git pull"
                 }]
             }]
         })

@@ -8,7 +8,7 @@ Autodeploy is a npm package to automatically deploy your git repo after a specif
 Use the package manager [npm](https://www.npmjs.com/) to install Autodeploy.
 
 ```bash
-npm i @taschendieb/autodeploy
+npm i @taschendieb/autodeploy -g
 ```
 
 ## Usage

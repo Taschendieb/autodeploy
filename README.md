@@ -13,6 +13,8 @@ npm i @taschendieb/autodeploy -g
 
 ## Usage
 
+Go to "Settings" in your repository and add a webhook to your website/ip with _port 1337_ (example.com:1337). Subsequently check "Send me everything"
+
 ```bash
 autodeploy deploy <giturl> <path> [name]
 ```

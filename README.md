@@ -1,7 +1,7 @@
 # Autodeploy 
 
 Autodeploy is a npm package to automatically deploy your git repo after a specific git action (push, merge, ...)  
-![alt text](https://github.com/Taschendieb/autodeploy/blob/master/Element%201.png)
+![alt text](https://raw.githubusercontent.com/Taschendieb/autodeploy/master/Element%201.png)
 
 ## Installation
 

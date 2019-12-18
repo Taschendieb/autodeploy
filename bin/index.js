@@ -52,11 +52,11 @@ yargs
                 process.exit(2);
             }
             console.warn("Run pm2 startup to start AutoDeploy on reboot!")
-            pm2.start('./lib/server.js',{
+            pm2.start(__dirname + '/../lib/server.js',{
                 "name": "AutoDeploy Server"
             }, function (err) {
                 pm2.disconnect();
-                if (err) console.log("PM2 daemon is already running!");
+                if (err) console.log("PM2 daemon is already running!" + err);
             });
         });
     })

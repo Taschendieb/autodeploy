@@ -1,10 +1,12 @@
 #!/usr/bin/node
 
-var fs = require("fs")
+const logic = require('../lib/logic.js');
+const config = require("../lib/config.js");
 
 const yargs = require('yargs');
-const config = require("../lib/config.js")
 const path = require("path");
+const pm2 = require('pm2');
+const child_process = require('child_process');
 
 yargs
     .command('deploy <url> <path> [name]', 'map a deployment', (yargs) => {
@@ -24,63 +26,94 @@ yargs
         } else {
             name = argv.name
         }
+        logic.initRepository(path.resolve(argv.path), argv.url, argv.force)
         config.appendDeployment({
             name: name,
             url: argv.url,
-            path: path.resolve(argv.path)
+            path: path.resolve(argv.path),
+            trigger: [{
+                event: "push",
+                branch: "master",
+                actions: [{
+                    name: "pull",
+                    action: "git reset --hard origin/master && git pull"
+                }]
+            }]
         })
     })
-    .alias("ls", "list")
-    .command('list', 'list all deployments', (yargs) => {}, (argv) => {
-        console.table(config.listDeployments())
+    .command(['list', 'ls'], 'list all deployments', (yargs) => {}, async (argv) => {
+        const deployments = await config.listDeployments()
+        console.table(deployments,["name","url","path"])
     })
-    .alias("rm", "remove")
-    .command('remove <name>', 'remove a deployment', (yargs) => {
+    .command(['autostart', 'as'], 'autostart', (yargs) => {}, async (argv) => {
+        pm2.connect(function (err) {
+            if (err) {
+                console.error(err);
+                process.exit(2);
+            }
+            console.warn("Run pm2 startup to start AutoDeploy on reboot!")
+            pm2.start(__dirname + '/../lib/server.js',{
+                "name": "AutoDeploy Server"
+            }, function (err) {
+                pm2.disconnect();
+                if (err) console.log("PM2 daemon is already running!" + err);
+            });
+        });
+    })
+    .command(['remove <name>', 'rm <name>'], 'remove a deployment', (yargs) => {
         yargs
             .positional('name', {
                 describe: 'name of the deployment',
             })
-    }, (argv) => {
-        if (config.deleteDeployment(argv.name)) {
+    }, async (argv) => {
+        const res = await config.deleteDeployment(argv.name)
+        if (res) {
             console.log(argv.name + " successfully removed")
         } else {
             console.log("error removing " + argv.name)
         }
 
-    }).argv
+    })
+    .command('listen', 'listen for changes to the repo', (argv) => {
+        child_process.spawn('node', [__dirname + "/../lib/server.js"], {stdio: 'inherit'});
+    })
+    .option('force', {
+        alias: 'f',
+        type: 'boolean',
+        description: 'force command'
+    })
+    .demandCommand()
+    .argv
 
 /*
 // autodeploy giturl Mantis /home/penis/mantis
-/*
-
-.command('list', 'list all deployments', (yargs) => {}, (argv) => {
-        console.table(config.listDeployments())
-    }).command('remove <name>', 'remove a deployment', (yargs) => {}, (argv) => {
-        yargs
-            .positional('name', {
-                describe: 'name of the deployment',
-            })
-    }, (argv) => {
-        if (config.deleteDeployment(argv.name)) {
-            console.log(argv.name + " successfully removed")
-        } else {
-            console.log("error removing " + argv.name)
-        }
-
-    }).argv
 
 {
+    config: {},
     deployments: [
         {
-            name:
-            url:
-            path:
+            name: ""
+            url: ""
+            path: ""
+            "trigger": [
+                {
+                    "event": "push",
+                    "branch": "master",
+                    "actions": [
+                        {
+                            "name": "pull",
+                            "action": "git pull"
+                        },
+                        {
+                            "name": "restart",
+                            "action": "./deploy.sh"
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
-
-*/
-
 
 // autodeploy https://github.com/colodenn/Mantis Mantis .
 // adding mantis and path to apimap.json
@@ -91,3 +124,5 @@ yargs
 
 // curl -d '{"key1":"value1", "key2":"value2"}' -H "Content-Type: application/json" -X POST localhost:1337
 // https://nodejs.org/api/http.html#http_class_http_incomingmessage
+
+*/

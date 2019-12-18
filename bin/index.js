@@ -36,7 +36,7 @@ yargs
                 branch: "master",
                 actions: [{
                     name: "pull",
-                    action: "git reset --hard origin/master"
+                    action: "git pull && git reset --hard origin/master"
                 }]
             }]
         })
@@ -75,7 +75,7 @@ yargs
 
     })
     .command('listen', 'listen for changes to the repo', (argv) => {
-        child_process.spawn(__dirname + "/../lib/server.js", [], {stdio: 'inherit'});
+        child_process.spawn('node', [__dirname + "/../lib/server.js"], {stdio: 'inherit'});
     })
     .option('force', {
         alias: 'f',

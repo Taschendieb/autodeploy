@@ -32,4 +32,4 @@ Please make sure to update tests as appropriate.
 
 Hannes Burger
 
-[Cornelius Denninger](codenn.de)
+[Cornelius Denninger](https://codenn.de)

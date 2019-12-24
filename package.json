@@ -1,13 +1,13 @@
 {
   "name": "@taschendieb/autodeploy",
   "version": "1.0.0",
-  "description": "Automatically pull git repo and deploy after incoming push",
+  "description": "Automatically run specified commands on incoming push of git repository",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "autoplay": "bin/index.js"
+    "autodeploy": "bin/index.js"
   },
   "keywords": [],
   "author": "Hannes Burger, Cornelius Louis Denninger",

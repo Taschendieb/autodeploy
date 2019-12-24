@@ -1,7 +1,7 @@
 {
-  "name": "autoplay",
+  "name": "@taschendieb/autodeploy",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automatically pull git repo and deploy after incoming push",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,10 +10,23 @@
     "autoplay": "bin/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Hannes Burger, Cornelius Louis Denninger",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "pm2": "^4.2.1",
     "yargs": "^15.0.2"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Taschendieb/autodeploy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Taschendieb/autodeploy/issues"
+  },
+  "homepage": "https://github.com/Taschendieb/autodeploy#readme"
 }

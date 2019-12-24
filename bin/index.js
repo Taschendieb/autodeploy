@@ -20,36 +20,43 @@ yargs
             .positional('name', {
                 describe: 'name of the project',
             })
-    }, (argv) => {
+    }, async (argv) => {
         if (argv.name === undefined) {
             name = argv.url.split("/").pop()
         } else {
             name = argv.name
         }
-        logic.initRepository(path.resolve(argv.path), argv.url, argv.force)
-        config.appendDeployment({
-            name: name,
-            url: argv.url,
-            path: path.resolve(argv.path),
-            trigger: [{
-                event: "push",
-                branch: "master",
-                actions: [{
-                    name: "pull",
-                    action: "git reset --hard origin/master && git pull"
+        deployment = await config.getDeployment(name);
+        if (deployment !== null) {
+            console.log(`Deployment with name '${name}' already exists! please specify a different name`);
+            return;
+        }
+        logic.initRepository(path.resolve(argv.path), argv.url, argv.force).then(() => {
+            console.log(`Creating Deployment. Please point the WebHook to port ${config.settings.port}`);
+            config.appendDeployment({
+                name: name,
+                url: argv.url,
+                path: path.resolve(argv.path),
+                trigger: [{
+                    event: "push",
+                    branch: "master",
+                    actions: [{
+                        name: "pull",
+                        action: "git reset --hard origin/master && git pull"
+                    }]
                 }]
-            }]
+            });
         })
     })
     .command(['list', 'ls'], 'list all deployments', (yargs) => {}, async (argv) => {
         const deployments = await config.listDeployments()
         console.table(deployments,["name","url","path"])
     })
-    .command(['autostart', 'as'], 'autostart', (yargs) => {}, async (argv) => {
+    .command(['autostart', 'as'], 'register server to automatically start', (yargs) => {}, async (argv) => {
         pm2.connect(function (err) {
             if (err) {
                 console.error(err);
-                process.exit(2);
+                process.exit(1);
             }
             console.warn("Run pm2 startup to start AutoDeploy on reboot!")
             pm2.start(__dirname + '/../lib/server.js',{
@@ -84,45 +91,3 @@ yargs
     })
     .demandCommand()
     .argv
-
-/*
-// autodeploy giturl Mantis /home/penis/mantis
-
-{
-    config: {},
-    deployments: [
-        {
-            name: ""
-            url: ""
-            path: ""
-            "trigger": [
-                {
-                    "event": "push",
-                    "branch": "master",
-                    "actions": [
-                        {
-                            "name": "pull",
-                            "action": "git pull"
-                        },
-                        {
-                            "name": "restart",
-                            "action": "./deploy.sh"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
-
-// autodeploy https://github.com/colodenn/Mantis Mantis .
-// adding mantis and path to apimap.json
-// git clone repo to path 
-// adding deploy.sh for additional deploy configuration e.g. flask serve, service start usw..
-
-
-
-// curl -d '{"key1":"value1", "key2":"value2"}' -H "Content-Type: application/json" -X POST localhost:1337
-// https://nodejs.org/api/http.html#http_class_http_incomingmessage
-
-*/

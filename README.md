@@ -50,7 +50,7 @@ This file is located by default in "~/.autodeploy/config.json"
 
 The Structure looks as follows:
 
-```JSON
+```
 {
     // This section is for application-wide configurations
     "settings": {

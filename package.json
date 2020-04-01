@@ -1,6 +1,6 @@
 {
   "name": "@taschendieb/autodeploy",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Automatically run specified commands on incoming push of git repository",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "^1.0.2",
-    "pm2": "^4.2.1",
-    "yargs": "^15.0.2"
+    "pm2": "^4.2.3",
+    "yargs": "^15.3.1"
   },
   "directories": {
     "lib": "lib"

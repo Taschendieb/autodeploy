@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "child_process": "^1.0.2",
-    "pm2": "^4.2.3",
+    "pm2": "^5.2.0",
     "yargs": "^15.3.1"
   },
   "directories": {
